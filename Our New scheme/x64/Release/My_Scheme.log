@@ -1,0 +1,8 @@
+﻿  Client.cpp
+E:\006.Thesis\20220110\007.draft-v7\Exp\My_Scheme\SecureParam.h(14,23): error C3861: “primeGeneration”: 找不到标识符
+  Encryption.cpp
+E:\006.Thesis\20220110\007.draft-v7\Exp\My_Scheme\SecureParam.h(14,23): error C3861: “primeGeneration”: 找不到标识符
+  KeyServer.cpp
+E:\006.Thesis\20220110\007.draft-v7\Exp\My_Scheme\SecureParam.h(14,23): error C3861: “primeGeneration”: 找不到标识符
+  SecureParam.cpp
+E:\006.Thesis\20220110\007.draft-v7\Exp\My_Scheme\SecureParam.h(14,23): error C3861: “primeGeneration”: 找不到标识符
