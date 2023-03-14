@@ -1,8 +1,19 @@
 ﻿  Client.cpp
-E:\006.Thesis\20220110\007.draft-v7\Exp\My_Scheme\SecureParam.h(14,23): error C3861: “primeGeneration”: 找不到标识符
   Encryption.cpp
-E:\006.Thesis\20220110\007.draft-v7\Exp\My_Scheme\SecureParam.h(14,23): error C3861: “primeGeneration”: 找不到标识符
   KeyServer.cpp
-E:\006.Thesis\20220110\007.draft-v7\Exp\My_Scheme\SecureParam.h(14,23): error C3861: “primeGeneration”: 找不到标识符
   SecureParam.cpp
-E:\006.Thesis\20220110\007.draft-v7\Exp\My_Scheme\SecureParam.h(14,23): error C3861: “primeGeneration”: 找不到标识符
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.34.31933\include\algorithm(3067,95): warning C4242: “=”: 从“int”转换到“char”，可能丢失数据
+E:\006.Thesis\20220110\007.draft-v7\Exp\My_Scheme\SecureParam.cpp(53,61): message : 查看对正在编译的函数 模板 实例化“_OutIt std::transform<std::_String_iterator<std::_String_val<std::_Simple_types<_Elem>>>,std::_String_iterator<std::_String_val<std::_Simple_types<_Elem>>>,int(__cdecl *)(int)>(const _InIt,const _InIt,_OutIt,_Fn)”的引用
+          with
+          [
+              _OutIt=std::_String_iterator<std::_String_val<std::_Simple_types<char>>>,
+              _Elem=char,
+              _InIt=std::_String_iterator<std::_String_val<std::_Simple_types<char>>>,
+              _Fn=int (__cdecl *)(int)
+          ]
+  正在生成代码
+  0 of 1562 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  已完成代码的生成
+  My_Scheme.vcxproj -> E:\006.Thesis\20220110\007.draft-v7\Exp\My_Scheme\x64\Release\My_Scheme.exe

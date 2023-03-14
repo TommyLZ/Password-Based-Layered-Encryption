@@ -48,7 +48,6 @@ string Client::getID() {
     return ID_u;
 }
 
-
 Integer Client::rGeneration (Integer prime) {
     AutoSeededRandomPool prng;
     Integer r;
@@ -61,39 +60,10 @@ Integer Client::rGeneration (Integer prime) {
 }
 
 Integer Client::blindsPassword() {
-    string h1;
-    SHA256 sha256;
-
-    StringSource ss(
-        this -> psw_u,
-        true,
-        new HashFilter(sha256,
-            new HexEncoder(new CryptoPP::StringSink(h1)),
-            false,
-            secureParam / 8) // cut the formoal secureParam / 8 bytes
-    );
-    cout << endl;
-    cout << "h1: " << h1 << endl;
-
-    // convert str to char*, further convert to integer.
-    char* a = new char[100];
-    int i = 0;
-
-    for (; i < h1.size(); ++i) {
-        a[i] = h1[i];
-    }
-
-    a[i++] = 'h';
-    a[i] = '\0';
-    cout << "a: " << a << endl;
-
-    Integer H1(a);
-    cout << "H1: " << H1 << endl;
+    Integer H(hash256Function(this->psw_u));
+    cout << "hash value of client: " << H << endl;
     
-    Integer alpha = 1;
-    for (int i = 0; i < this->r; ++i) {
-        alpha = alpha * H1 % prime;
-    }
+    Integer alpha = fastPower(H, this->r);
 
     return alpha;
 }

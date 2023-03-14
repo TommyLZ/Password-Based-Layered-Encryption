@@ -29,7 +29,7 @@ using namespace std;
 
 int main() {
 	cout << "************************Encryption Mode************************" << endl;
-
+	
 	// User input the password & ID
 	string psw_u = "f4520tommy";
 	string ID_u = "Wolverine";
@@ -43,29 +43,24 @@ int main() {
 	alpha = client.blindsPassword();
 	cout << "alpha: " << alpha << endl;
 
-	// 
+	// Password hardening
 	Integer beta;
-	beta = keyserver.hardenPassword(client.getID(), alpha, prime);
+	beta = keyserver.hardenPassword(client.getID(), alpha);
 	cout << "beta: " << beta << endl;
 	
-	string msg_beta;
-	std::stringstream ss;
-	ss << std::hex << beta;
-	ss >> msg_beta;
-	transform(msg_beta.begin(), msg_beta.end(), msg_beta.begin(), ::toupper);
-	cout << msg_beta << endl;
-	msg_beta = msg_beta.substr(0, msg_beta.size() - 1);
-	cout << "msg_beta: " << msg_beta << endl;
-
-	bool result = false;
+	// Digital signature (NIZK)
+	string msg_beta = Integer_to_string(beta);
 	string signature;
+	bool result = false;
 	result = keyserver.SignMessage(msg_beta, signature);
 	assert(true == result);
 
-	result = keyserver.VerifyMessage(keyserver.mpk, msg_beta, signature);
+	result = VerifyMessage(keyserver.mpk, msg_beta, signature);
+	cout << "verification result: " << result << endl;
 	assert(true == result);
 
-
+	// credential generation
+	
 
 	return 0;
 }

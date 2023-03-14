@@ -8,13 +8,11 @@ using namespace std;
 class Client
 {
 private:
-
 	Integer r;
 	string psw_u;
 	string ID_u;
 
 public:
-
 	Client ();
 	Client (string psw_u, string ID_u);
 
