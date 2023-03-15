@@ -1,8 +1,17 @@
 #pragma once
 
+#include "eccrypto.h"
+using CryptoPP::ECDSA;
+using CryptoPP::ECP;
+using CryptoPP::DL_GroupParameters_EC;
+
 #include "integer.h"
 using CryptoPP::Integer;
 
+#include "sha.h"
+using CryptoPP::SHA256;
+
+#include <vector>
 using namespace std;
 
 class Client
@@ -22,4 +31,6 @@ public:
 	Integer rGeneration (Integer prime);
 
 	Integer blindsPassword();
+
+	void credGen(const ECDSA<ECP, SHA256>::PublicKey& key, const string& message, const string& signature, const Integer& beta, vector<string> & cred);
 };

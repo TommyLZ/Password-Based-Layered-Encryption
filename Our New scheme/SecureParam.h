@@ -14,6 +14,9 @@ using CryptoPP::SHA256;
 #include <iostream>
 using namespace std;
 
+// generate a random number
+Integer randomGeneration(const int& secureParam);
+
 // generate a random prime of secureParam bits
 Integer primeGeneration(const int& secureParam);
 

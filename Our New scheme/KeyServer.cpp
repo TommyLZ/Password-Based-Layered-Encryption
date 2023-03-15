@@ -41,6 +41,7 @@ extern const int secreParam;
 extern const Integer prime;
 
 #include <assert.h>
+#include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -65,8 +66,6 @@ KeyServer::KeyServer() {
 
     //result = GeneratePublicKey(this -> msk, this -> mpk);
     //assert(true == result);
-
-
 
     //// Save key in PKCS#9 and X.509 format    
     //SavePrivateKey( "ec.private.key", this->msk);
@@ -169,4 +168,16 @@ bool KeyServer::SignMessage(const string& message, string& signature)
     ); // StringSource
 
     return !signature.empty();
+}
+
+void KeyServer::store (string& ID_u, string& s_u, string& cred_ks) {
+    ofstream out("KS_store.txt");
+
+    if (out.is_open()) {
+        out << "user_identity: " << ID_u 
+            << "    s_u:" << s_u
+            << "    credential: " << cred_ks;
+    }
+
+    out.close();
 }

@@ -21,10 +21,19 @@
     <ClCompile Include="KeyServer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Encryption.cpp">
+    <ClCompile Include="Registration.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="SecureParam.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CloudServer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Encryption.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -36,6 +45,15 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="SecureParam.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CloudServer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Registration.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Encryption.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

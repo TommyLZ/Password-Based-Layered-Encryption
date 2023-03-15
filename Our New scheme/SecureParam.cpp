@@ -30,16 +30,42 @@ using CryptoPP::HexEncoder;
 
 #include <numeric>
 #include <sstream>
+#include <fstream>
 #include <Windows.h>
 using namespace std;
 
-// Realize the primeGeneration function
-Integer primeGeneration (const int& secureParam) {
-	AutoSeededRandomPool prng;
-	Integer p;
+Integer randomGeneration(const int& secureParam) {
+    AutoSeededRandomPool prng;
+    Integer p;
 
-	AlgorithmParameters params = MakeParameters("BitLength", secureParam)("RandomNumberType", Integer::PRIME);
-	p.GenerateRandom(prng, params);
+    AlgorithmParameters params = MakeParameters("BitLength", secureParam);
+    p.GenerateRandom(prng, params);
+
+    return p;
+}
+
+Integer primeGeneration (const int& secureParam) {
+    Integer p;
+    ifstream in("Prime_store.txt");
+
+    if (!in) {   // If the file doesn't exit
+        AutoSeededRandomPool prng;
+
+        AlgorithmParameters params = MakeParameters("BitLength", secureParam)("RandomNumberType", Integer::PRIME);
+        p.GenerateRandom(prng, params);
+
+        ofstream out("Prime_store.txt");
+
+        if (out.is_open()) {
+            out << hex << p;
+        }
+
+        out.close();
+    }
+    else {
+        in >> hex >>  p;
+        in.close();
+    }
 
 	return p;
 }
@@ -59,7 +85,7 @@ string Integer_to_string (const Integer& integer) {
 }
 
 Integer string_to_Integer (const string& str) {
-    // Fisrt convert string to char*
+    // Firstly, convert string to char*
     char* a = new char[100];
     int i = 0;
 

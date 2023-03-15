@@ -24,11 +24,12 @@ extern const Integer prime;
 #include "sha.h"
 using CryptoPP::SHA256;
 
+#include <cstdlib>
+#include <cmath>
 #include <iostream>
 #include <string>
 #include <sstream>
-#include <cstdlib>
-#include <cmath>
+#include <vector>
 
 using namespace std;
 
@@ -66,4 +67,24 @@ Integer Client::blindsPassword() {
     Integer alpha = fastPower(H, this->r);
 
     return alpha;
+}
+
+void Client::credGen (const ECDSA<ECP, SHA256>::PublicKey& key, const string& message, const string& signature, const Integer& beta, vector<string>& cred) {
+    if (!VerifyMessage(key, message, signature)) {
+        abort();
+    }
+
+    string s_u = Integer_to_string(randomGeneration(secureParam));
+    // beta^(1/r) = (beta^r)^(-1)
+    // using Fermat's little theorem, it is (beta)^(p + r -1)
+    string beta_inverse = Integer_to_string(fastPower(beta, prime + this->r - 1));
+    string pwd_u_hat = Integer_to_string(hash256Function(this->psw_u + beta_inverse));
+
+    string cred_ks = Integer_to_string(hash256Function(pwd_u_hat + this -> ID_u));
+    string cred_cs = Integer_to_string(hash256Function(this->ID_u + pwd_u_hat + s_u));
+
+    cred.push_back(this->ID_u);
+    cred.push_back(cred_ks);
+    cred.push_back(s_u);
+    cred.push_back(cred_cs);
 }
