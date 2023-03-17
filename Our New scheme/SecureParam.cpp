@@ -10,10 +10,12 @@ using CryptoPP::ECP;
 using CryptoPP::DL_GroupParameters_EC;
 
 #include "filters.h"
+using CryptoPP::StringSink;
 using CryptoPP::StringSource;
 using CryptoPP::HashFilter;
 using CryptoPP::ArraySink;
 using CryptoPP::SignerFilter;
+using CryptoPP::StreamTransformationFilter;
 using CryptoPP::SignatureVerificationFilter;
 
 #include "integer.h"
@@ -28,9 +30,17 @@ using CryptoPP::SHA256;
 #include "hex.h"
 using CryptoPP::HexEncoder;
 
+#include "aes.h"
+using CryptoPP::AES;
+
+#include "ccm.h"
+using CryptoPP::CTR_Mode;
+
+#include <fstream>
+#include <iomanip>
 #include <numeric>
 #include <sstream>
-#include <fstream>
+#include <sys/timeb.h>
 #include <Windows.h>
 using namespace std;
 
@@ -86,7 +96,7 @@ string Integer_to_string (const Integer& integer) {
 
 Integer string_to_Integer (const string& str) {
     // Firstly, convert string to char*
-    char* a = new char[100];
+    char* a = new char[200];
     int i = 0;
 
     for (; i < str.size(); ++i) {
@@ -170,4 +180,117 @@ bool VerifyMessage(const ECDSA<ECP, SHA256>::PublicKey& key, const string& messa
     );
 
     return result;
+}
+
+void Integer_to_Bytes(Integer num, byte* bytes)
+{
+    for (int i = 0, j= num.ByteCount()-1, k=0; i < num.ByteCount(); ++i, --j, ++k) {
+        bytes[k] = num.GetByte(j);
+    }
+}
+
+string time_to_string (time_t time) {
+    tm curr_tm{};
+	char time_string[100];
+
+	localtime_s(&curr_tm ,&time);
+	
+	strftime(time_string, 50, "%X", &curr_tm);
+
+    return time_string;
+}
+
+// AES: key length 128, 192, 256
+string AES_CTR_Enc (byte* key, string plain) {
+    AutoSeededRandomPool prng;
+
+    byte iv[AES::BLOCKSIZE];
+    prng.GenerateBlock(iv, sizeof(iv));
+
+    string cipher, encoded, recovered;
+
+    // Pretty print key
+    encoded.clear();
+    StringSource(key, 16, true,
+        new HexEncoder(
+            new StringSink(encoded)
+        ) // HexEncoder
+    ); // StringSource
+    cout << "key: " << encoded << endl;
+
+    // Pretty print iv
+    encoded.clear();
+    StringSource(iv, sizeof(iv), true,
+        new HexEncoder(
+            new StringSink(encoded)
+        ) // HexEncoder
+    ); // StringSource
+    cout << "iv: " << encoded << endl;
+
+    // Encryption
+    try
+    {
+        cout << "plain text: " << plain << endl;
+
+        CTR_Mode< AES >::Encryption e;
+        e.SetKeyWithIV(key, 16, iv);
+
+        StringSource(plain, true,
+            new StreamTransformationFilter(e,
+                new StringSink(cipher)
+            ) // StreamTransformationFilter      
+        ); // StringSource
+    }
+    catch (const CryptoPP::Exception& e)
+    {
+        cerr << e.what() << endl;
+        exit(1);
+    }
+
+    // Pretty print
+    encoded.clear();
+    StringSource(cipher, true,
+        new HexEncoder(
+            new StringSink(encoded)
+        ) // HexEncoder
+    ); // StringSource
+    cout << "cipher text: " << encoded << endl;
+
+    return cipher;
+}
+
+//string AES_CTR_Dec(byte* key, string cipher) {
+//
+//    // Decryption
+//    try
+//    {
+//        CTR_Mode< AES >::Decryption d;
+//        d.SetKeyWithIV(key, sizeof(key), iv);
+//
+//        // The StreamTransformationFilter removes
+//        //  padding as required.
+//        StringSource s(cipher, true,
+//            new StreamTransformationFilter(d,
+//                new StringSink(recovered)
+//            ) // StreamTransformationFilter
+//        ); // StringSource
+//
+//        cout << "recovered text: " << recovered << endl;
+//    }
+//    catch (const CryptoPP::Exception& e)
+//    {
+//        cerr << e.what() << endl;
+//        exit(1);
+//    }
+//
+//}
+
+int hex_to_int(Integer hexNum) {
+    stringstream ss;
+
+    int decNum;
+    ss << std::hex << hexNum;
+    ss >> decNum;
+
+    return decNum;
 }

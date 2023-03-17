@@ -32,7 +32,7 @@ using CryptoPP::SHA256;
 using namespace std;
 
 void Registration (const string& psw_u, const string& ID_u) {
-	cout << "************************Registration Mode************************" << endl;
+	cout << "***************************Registration Mode***************************" << endl;
 	
 	// User input the password & ID
 	// Object instantiation
@@ -57,6 +57,7 @@ void Registration (const string& psw_u, const string& ID_u) {
 	result = keyserver.SignMessage(msg_beta, signature);
 	assert(true == result);
 
+	// Credential Generation
 	vector<string> cred;
 	client.credGen(keyserver.mpk, msg_beta, signature, beta, cred);
 	keyserver.store(cred[0], cred[1], cred[2]);

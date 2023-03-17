@@ -12,6 +12,7 @@ using CryptoPP::Integer;
 using CryptoPP::SHA256;
 
 #include <iostream>
+#include <Windows.h>
 using namespace std;
 
 // generate a random number
@@ -35,8 +36,16 @@ Integer fastPower(Integer base, Integer power);
 // signature verification function
 bool VerifyMessage(const ECDSA<ECP, SHA256>::PublicKey& key, const string& message, const string& signature);
 
+void Integer_to_Bytes(Integer num, byte* bytes);
+
+string time_to_string(time_t time);
+
+string AES_CTR_Enc(byte* key, string plain);
+
+int hex_to_int(Integer hexNum);
+
 // define the secureParam
-const int secureParam = 80;
+const int secureParam = 128;
 
 const Integer prime = primeGeneration(secureParam);
 

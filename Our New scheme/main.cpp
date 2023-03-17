@@ -10,5 +10,7 @@ int main() {
 
 	Registration(psw_u, ID_u);
 
+	Encryption(psw_u, ID_u);
+
 	return 0;
 }

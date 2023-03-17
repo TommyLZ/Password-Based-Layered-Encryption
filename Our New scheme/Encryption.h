@@ -2,4 +2,4 @@
 #include <iostream>
 using namespace std;
 
-void Encryption();
+void Encryption(const string& psw_u, const string& ID_u);

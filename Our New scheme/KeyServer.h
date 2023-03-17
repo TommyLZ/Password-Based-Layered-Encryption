@@ -33,11 +33,11 @@ using CryptoPP::SHA256;
 
 #include <assert.h>
 #include <iostream>
-using std::cout;
-using std::endl;
 #include <string>
-using std::string;
+#include <vector>
 #include <Windows.h>
+
+using namespace std;
 
 #if _MSC_VER <= 1200 // VS 6.0
 using CryptoPP::ECDSA<ECP, SHA256>;
@@ -74,5 +74,7 @@ public:
 	Integer hardenPassword(string ID_u, Integer alpha);
 
 	void store(string& ID_u, string& s_u, string& cred_ks);
+
+	void tokenVerify(string& token, vector<string>& KSresponse);
 };
 

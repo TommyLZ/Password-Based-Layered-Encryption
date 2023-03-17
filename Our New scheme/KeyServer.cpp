@@ -181,3 +181,12 @@ void KeyServer::store (string& ID_u, string& s_u, string& cred_ks) {
 
     out.close();
 }
+
+void KeyServer::tokenVerify(string& token, vector<string> & KSresponse) {
+    ifstream in("KS_store.txt");
+    string s;
+
+    in >> s;
+    
+    cout << "read the file: " << s << endl;
+}
