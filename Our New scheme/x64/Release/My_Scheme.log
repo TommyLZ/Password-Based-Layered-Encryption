@@ -1,17 +1,7 @@
-﻿  SecureParam.cpp
-E:\006.Thesis\20220110\007.draft-v7\Exp\My_Scheme\SecureParam.cpp(190,50): warning C4018: “<”: 有符号/无符号不匹配
-C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.34.31933\include\algorithm(3067,95): warning C4242: “=”: 从“int”转换到“char”，可能丢失数据
-E:\006.Thesis\20220110\007.draft-v7\Exp\My_Scheme\SecureParam.cpp(89,61): message : 查看对正在编译的函数 模板 实例化“_OutIt std::transform<std::_String_iterator<std::_String_val<std::_Simple_types<_Elem>>>,std::_String_iterator<std::_String_val<std::_Simple_types<_Elem>>>,int(__cdecl *)(int)>(const _InIt,const _InIt,_OutIt,_Fn)”的引用
-          with
-          [
-              _OutIt=std::_String_iterator<std::_String_val<std::_Simple_types<char>>>,
-              _Elem=char,
-              _InIt=std::_String_iterator<std::_String_val<std::_Simple_types<char>>>,
-              _Fn=int (__cdecl *)(int)
-          ]
+﻿  KeyServer.cpp
   正在生成代码
-  39 of 1904 functions ( 2.0%) were compiled, the rest were copied from previous compilation.
+  1 of 1902 functions (<0.1%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    51 functions had inline decision re-evaluated but remain unchanged
+    1 functions had inline decision re-evaluated but remain unchanged
   已完成代码的生成
   My_Scheme.vcxproj -> E:\006.Thesis\20220110\007.draft-v7\Exp\My_Scheme\x64\Release\My_Scheme.exe

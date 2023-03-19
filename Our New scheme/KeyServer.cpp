@@ -174,9 +174,9 @@ void KeyServer::store (string& ID_u, string& s_u, string& cred_ks) {
     ofstream out("KS_store.txt");
 
     if (out.is_open()) {
-        out << "user_identity: " << ID_u 
+        out << "user_identity:" << ID_u 
             << "    s_u:" << s_u
-            << "    credential: " << cred_ks;
+            << "    credential:" << cred_ks;
     }
 
     out.close();
@@ -184,9 +184,16 @@ void KeyServer::store (string& ID_u, string& s_u, string& cred_ks) {
 
 void KeyServer::tokenVerify(string& token, vector<string> & KSresponse) {
     ifstream in("KS_store.txt");
-    string s;
+    string user_name;
+    string s_u;
+    string cred_ks;
 
-    in >> s;
-    
-    cout << "read the file: " << s << endl;
+    in >> user_name;
+    in >> s_u;
+    in >> cred_ks;
+
+    //cout << user_name << endl;
+    //cout << s_u << endl;
+    //cout << cred_ks << endl;
+
 }
