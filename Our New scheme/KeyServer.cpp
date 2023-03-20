@@ -40,6 +40,7 @@ using CryptoPP::SHA256;
 extern const int secreParam;
 extern const Integer prime;
 
+#include <algorithm>
 #include <assert.h>
 #include <fstream>
 #include <iostream>
@@ -139,18 +140,19 @@ void KeyServer::LoadPublicKey(const string& filename, ECDSA<ECP, SHA256>::Public
 
 // Generate Hash Function and its output is in Zp*
 Integer KeyServer::hardenPassword(string ID_u, Integer alpha) {
+
     string msk = Integer_to_string((this->msk).GetPrivateExponent());
 
     Integer nu = hash256Function(msk + ID_u);
     cout << "Hash of key server: " << nu << endl;
     
-    // Determine the interprime
-    while (!isInterprime(nu, prime)) {
-        nu += 11;
-    }
+    //// Determine the interprime
+    //while (!isInterprime(nu, prime)) {
+    //    nu += 11;
+    //}
 
     Integer beta = fastPower(alpha, nu);
-
+    
     return beta;
 }
 
@@ -182,18 +184,29 @@ void KeyServer::store (string& ID_u, string& s_u, string& cred_ks) {
     out.close();
 }
 
-void KeyServer::tokenVerify(string& token, vector<string> & KSresponse) {
+void KeyServer::tokenVerify(string& token, byte* IV, vector<string> & KSresponse) {
     ifstream in("KS_store.txt");
-    string user_name;
+    string user_identity;
     string s_u;
     string cred_ks;
 
-    in >> user_name;
+    in >> user_identity;
     in >> s_u;
     in >> cred_ks;
 
-    //cout << user_name << endl;
-    //cout << s_u << endl;
-    //cout << cred_ks << endl;
+    user_identity = user_identity.substr(user_identity.find(':')+1, user_identity.size());
+    cout << user_identity << endl;
+    s_u = s_u.substr(s_u.find(':') + 1, s_u.size());
+    cout << s_u << endl;
+    cred_ks = cred_ks.substr(cred_ks.find(':') + 1, cred_ks.size());
+    cout << cred_ks << endl;
 
+    // type conversion
+    Integer key_int;
+    key_int = string_to_Integer(cred_ks);
+    byte* key_byte = new byte[16];
+    Integer_to_Bytes(key_int, key_byte);
+
+    string plain;
+    AES_CTR_Dec(key_byte, IV, token, plain);
 }

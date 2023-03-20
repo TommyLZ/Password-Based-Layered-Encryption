@@ -40,7 +40,8 @@ void Integer_to_Bytes(Integer num, byte* bytes);
 
 string time_to_string(time_t time);
 
-string AES_CTR_Enc(byte* key, string plain);
+void AES_CTR_Enc(byte* key, string plain, string& cihper, byte* iv);
+void AES_CTR_Dec(byte* key, byte* iv, string cipher, string& plain);
 
 int hex_to_int(Integer hexNum);
 
@@ -50,7 +51,3 @@ const int secureParam = 128;
 const Integer prime = primeGeneration(secureParam);
 
 bool isInterprime(Integer a, Integer b);
-
-
-
-

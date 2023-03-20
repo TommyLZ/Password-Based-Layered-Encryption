@@ -12,6 +12,7 @@ using CryptoPP::Integer;
 using CryptoPP::SHA256;
 
 #include <vector>
+#include <Windows.h>
 using namespace std;
 
 class Client
@@ -34,5 +35,5 @@ public:
 
 	void credGen(const ECDSA<ECP, SHA256>::PublicKey& key, const string& message, const string& signature, const Integer& beta, vector<string> & cred);
 	
-	void tokenGenForKS(const ECDSA<ECP, SHA256>::PublicKey& key, const string& message, const string& signature, const Integer& beta, string& token);
+	void tokenGenForKS(const ECDSA<ECP, SHA256>::PublicKey& key, const string& message, const string& signature, const Integer& beta, string& token, byte* IV);
 };

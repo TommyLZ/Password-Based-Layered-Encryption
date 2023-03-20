@@ -87,9 +87,9 @@ string Integer_to_string (const Integer& integer) {
     ss << hex << integer;
     ss >> str;
     transform(str.begin(), str.end(), str.begin(), ::toupper);
-    cout << str << endl;
+    //cout << str << endl;
     str = str.substr(0, str.size() - 1);
-    cout << "str: " << str << endl;
+    //cout << "str: " << str << endl;
 
     return str;
 }
@@ -201,13 +201,12 @@ string time_to_string (time_t time) {
 }
 
 // AES: key length 128, 192, 256
-string AES_CTR_Enc (byte* key, string plain) {
+void AES_CTR_Enc (byte* key, string plain, string& cipher, byte* iv) {
     AutoSeededRandomPool prng;
 
-    byte iv[AES::BLOCKSIZE];
     prng.GenerateBlock(iv, sizeof(iv));
 
-    string cipher, encoded, recovered;
+    string encoded, recovered;
 
     // Pretty print key
     encoded.clear();
@@ -220,7 +219,7 @@ string AES_CTR_Enc (byte* key, string plain) {
 
     // Pretty print iv
     encoded.clear();
-    StringSource(iv, sizeof(iv), true,
+    StringSource(iv, 16, true,
         new HexEncoder(
             new StringSink(encoded)
         ) // HexEncoder
@@ -255,35 +254,57 @@ string AES_CTR_Enc (byte* key, string plain) {
         ) // HexEncoder
     ); // StringSource
     cout << "cipher text: " << encoded << endl;
-
-    return cipher;
+    cipher = encoded;
 }
 
-//string AES_CTR_Dec(byte* key, string cipher) {
-//
-//    // Decryption
-//    try
-//    {
-//        CTR_Mode< AES >::Decryption d;
-//        d.SetKeyWithIV(key, sizeof(key), iv);
-//
-//        // The StreamTransformationFilter removes
-//        //  padding as required.
-//        StringSource s(cipher, true,
-//            new StreamTransformationFilter(d,
-//                new StringSink(recovered)
-//            ) // StreamTransformationFilter
-//        ); // StringSource
-//
-//        cout << "recovered text: " << recovered << endl;
-//    }
-//    catch (const CryptoPP::Exception& e)
-//    {
-//        cerr << e.what() << endl;
-//        exit(1);
-//    }
-//
-//}
+void AES_CTR_Dec(byte* key, byte* iv, string cipher, string& plain) {
+    string recovered;
+
+    // Pretty print iv
+    cout << "iv in the decryption function: ";
+    string encoded;
+    encoded.clear();
+    StringSource(iv, 16, true,
+        new HexEncoder(
+            new StringSink(encoded)
+        ) // HexEncoder
+    ); // StringSource
+    cout << "iv: " << encoded << endl;
+
+    cout << "key in the decryption function: ";
+    encoded.clear();
+    StringSource(key, 16, true,
+        new HexEncoder(
+            new StringSink(encoded)
+        ) // HexEncoder
+    ); // StringSource
+    cout << encoded << endl;
+
+    cout << "cipher to be decrypted: " << cipher << endl;
+    // decryption
+    try
+    {
+        CTR_Mode< AES >::Decryption d;
+        d.SetKeyWithIV(key, 16, iv);
+
+        // the streamtransformationfilter removes
+        //  padding as required.
+        StringSource s(cipher, true,
+            new StreamTransformationFilter(d,
+                new StringSink(recovered)
+            ) // streamtransformationfilter
+        ); // stringsource
+
+        cout << "recovered text: " << recovered << endl;
+
+        plain = recovered;
+    }
+    catch (const CryptoPP::Exception& e)
+    {
+        cerr << e.what() << endl;
+        exit(1);
+    }
+}
 
 int hex_to_int(Integer hexNum) {
     stringstream ss;

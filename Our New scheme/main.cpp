@@ -1,16 +1,16 @@
-#include "Registration.h"
-#include "Encryption.h"
+#include "registration.h"
+#include "encryption.h"
 
 #include <iostream>
 using namespace std;
 
 int main() {
 	string psw_u = "f4520tommy";
-	string ID_u = "Wolverine";
+	string id_u = "wolverine";
 
-	Registration(psw_u, ID_u);
+	Registration(psw_u, id_u);
 
-	Encryption(psw_u, ID_u);
+	Encryption(psw_u, id_u);
 
 	return 0;
 }

@@ -2,6 +2,9 @@
 
 #include "Client.h"
 
+#include "hex.h"
+using CryptoPP::HexEncoder;
+
 #include "KeyServer.h"
 
 #include "CloudServer.h"
@@ -40,7 +43,9 @@ void Encryption(const string& psw_u, const string& ID_u) {
 
 	// Authentication
 	string token;
-	client.tokenGenForKS(keyserver.mpk, msg_beta, signature, beta, token);
+	byte* IV = new byte[AES::BLOCKSIZE];
+	client.tokenGenForKS(keyserver.mpk, msg_beta, signature, beta, token, IV);
+	cout << "the client pass the token: " << token << endl;
 	vector<string> response;
-	keyserver.tokenVerify(token, response);
+	keyserver.tokenVerify(token, IV, response);
 }
