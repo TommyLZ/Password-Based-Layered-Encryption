@@ -41,6 +41,7 @@ using CryptoPP::CTR_Mode;
 #include <cstdlib>
 #include <cmath>
 #include <iostream>
+#include <math.h>
 #include <string>
 #include <sstream>
 #include <vector>
@@ -69,45 +70,36 @@ Integer Client::rGeneration (Integer prime) {
     AutoSeededRandomPool prng;
     Integer r;
 
-    const Integer mini = 1;
-    const Integer maxi = prime;
+    const Integer mini = 0;
+    const Integer maxi = prime - 1;
     r.Randomize(prng, mini, maxi);
 
     return r;
 }
 
 Integer Client::blindsPassword() {
+
     Integer H(hash256Function(this->psw_u));
     cout << "hash value of client: " << H << endl;
-    
-    cout << "this -> r in the password hardening: " << this->r << endl;
-    Integer alpha = fastPower(H, this->r);
 
-    return alpha;
+    H = fastPower(generator, H);
+
+    return fastPower(H, this->r);
 }
 
-void Client::credGen (const ECDSA<ECP, SHA256>::PublicKey& key, const string& message, const string& signature, const Integer& beta, vector<string>& cred) {
+void Client::credGen (const ECDSA<ECP, SHA256>::PublicKey& key, string& message, string& signature, Integer& beta, vector<string>& cred) {
     if (!VerifyMessage(key, message, signature)) {
         abort();
     }
 
     string s_u = Integer_to_string(randomGeneration(secureParam));
-    // beta^(1/r) = (beta^r)^(-1)
-    // using Fermat's little theorem, it is (beta)^(p + r -1)
-    cout << fastPower(2, 3) << endl;
-    cout << "beta: " << beta << endl;
-    string beta_inverse = Integer_to_string(fastPower(beta, prime - this->r - 1));
-    cout << "$$$$$$inverse:" << fastPower(beta, this->r) * fastPower(beta, prime - this->r - 1) % prime << endl;
-    //cout << "beta: " << beta << endl;
-    //cout << "prime: " << prime << endl;
-    //cout << "this -> r: " << this->r << endl;
+
+    Integer r_inverse = this->r.InverseMod(prime);
+    string beta_inverse = Integer_to_string(fastPower(beta, r_inverse));
     cout << "beta_inverse: " << beta_inverse << endl;
+
     string pwd_u_hat = Integer_to_string(hash256Function(this->psw_u + beta_inverse));
-    //cout << "this->psw_u + beta_inverse: " << this->psw_u + beta_inverse << endl;
-    //cout << pwd_u_hat << endl;
-    //cout << "^^^^^^^^^^^^^^^^^^^^^^cred_ks: " << pwd_u_hat + this->ID_u << endl;
     string cred_ks = Integer_to_string(hash256Function(pwd_u_hat + this -> ID_u));
-    //cout <<"&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&cred_ks: " << cred_ks << endl;
     string cred_cs = Integer_to_string(hash256Function(this->ID_u + pwd_u_hat + s_u));
 
     cred.push_back(this->ID_u);
@@ -116,37 +108,23 @@ void Client::credGen (const ECDSA<ECP, SHA256>::PublicKey& key, const string& me
     cred.push_back(cred_cs);
 }
 
-void Client::tokenGenForKS(const ECDSA<ECP, SHA256>::PublicKey& key, const string& message, const string& signature, const Integer& beta, string& token, byte* iv) {
+void Client::tokenGenForKS(const ECDSA<ECP, SHA256>::PublicKey& key, string& message, string& signature, Integer& beta, string& token, byte* iv) {
     if (!VerifyMessage(key, message, signature)) {
         abort();
     }
 
-    // beta^(1/r) = (beta^r)^(-1)
-    // using Fermat's little theorem, it is (beta)^(p + r -1)
-
-    cout << fastPower(2, 3) << endl;
-    string beta_inverse = Integer_to_string(fastPower(beta, prime - this->r - 1));
-    cout << "$$$$$$inverse:" << fastPower(beta, this->r) * fastPower(beta, prime - this->r - 1) % prime << endl;
-    //cout << "beta: " << beta << endl;
-    //cout << "prime: " << prime << endl;
-    //cout << "this -> r: " << this->r << endl;
-    //cout << "prime + this-> -1" << prime + this->r - 1 << endl;
-    //cout << "fasterPower: " << fastPower(beta, prime + this->r - 1) << endl;
+    Integer r_inverse = this->r.InverseMod(prime);
+    cout << r_inverse * this->r % prime << endl;
+    string beta_inverse = Integer_to_string(fastPower(beta, r_inverse));
     cout << "beta_inverse: " << beta_inverse << endl;
-    string pwd_u_hat = Integer_to_string(hash256Function(this->psw_u + beta_inverse));
-    //cout << "this->psw_u + beta_inverse: " << this->psw_u + beta_inverse << endl;
-    //cout << pwd_u_hat << endl;
-    //// To use AES, the length needs to be 128 bits.
-    //cout << "^^^^^^^^^^^^^^^^^^^^^^omega_ks: " << pwd_u_hat + this->ID_u << endl;
-    Integer omega_ks = hash256Function(pwd_u_hat + this->ID_u);
 
+    string pwd_u_hat = Integer_to_string(hash256Function(this->psw_u + beta_inverse));
+    Integer omega_ks = hash256Function(pwd_u_hat + this->ID_u);
     byte* ase_key = new byte [16];
 
     cout << "omega_ks: " << omega_ks << endl;
 
     Integer_to_Bytes(omega_ks, ase_key);
-
-    cout << endl;
 
 	timeb t;
 	ftime(&t);
@@ -156,16 +134,4 @@ void Client::tokenGenForKS(const ECDSA<ECP, SHA256>::PublicKey& key, const strin
     cout << "str_time" << str_time << endl;
     
 	AES_CTR_Enc(ase_key, this->ID_u + str_time, token, iv);
-
-    cout << "client encryption the message into: " << token << endl;
-    cout << "client use IV for encyrption: ";
-    string encoded;
-    encoded.clear();
-    StringSource(iv, 16, true,
-        new HexEncoder(
-            new StringSink(encoded)
-        ) // HexEncoder
-    ); // StringSource
-    cout << encoded << endl;
 }
-

@@ -33,7 +33,7 @@ public:
 
 	Integer blindsPassword();
 
-	void credGen(const ECDSA<ECP, SHA256>::PublicKey& key, const string& message, const string& signature, const Integer& beta, vector<string> & cred);
+	void credGen(const ECDSA<ECP, SHA256>::PublicKey& key,  string& message,  string& signature,  Integer& beta, vector<string> & cred);
 	
-	void tokenGenForKS(const ECDSA<ECP, SHA256>::PublicKey& key, const string& message, const string& signature, const Integer& beta, string& token, byte* IV);
+	void tokenGenForKS(const ECDSA<ECP, SHA256>::PublicKey& key,  string& message,  string& signature,  Integer& beta, string& token, byte* IV);
 };

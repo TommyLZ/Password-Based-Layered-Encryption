@@ -71,7 +71,7 @@ public:
 	bool SignMessage(const string& message, string& signature);
 	bool VerifyMessage(const ECDSA<ECP, SHA256>::PublicKey& key, const string& message, const string& signature);
 
-	Integer hardenPassword(string ID_u, Integer alpha);
+    Integer hardenPassword(string ID_u, Integer alpha);
 
 	void store(string& ID_u, string& s_u, string& cred_ks);
 

@@ -42,7 +42,7 @@ void Registration (const string& psw_u, const string& ID_u) {
 
 	// Password blindness
 	Integer alpha;
-	alpha = client.blindsPassword();
+    alpha = client.blindsPassword();
 	cout << "alpha: " << alpha << endl;
 
 	// Password hardening

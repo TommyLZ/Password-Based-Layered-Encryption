@@ -44,6 +44,35 @@ using CryptoPP::CTR_Mode;
 #include <Windows.h>
 using namespace std;
 
+//Integer fastPower(Integer base, Integer power) {
+//    Integer result = 1;
+//
+//    while (power > 0) {
+//        if (power % 2 == 1) {
+//            result = (result * base) % prime;
+//        }
+//        power >>= 1;
+//        base = (base * base) % prime;
+//    }
+//
+//    return result;
+//}
+
+Integer fastPower(const Integer& x, const Integer& y)
+{
+    Integer res = 1;
+    Integer x_mod_p = x % prime;
+    Integer y_copy = y;
+    while (y_copy > 0) {
+        if (y_copy.IsOdd()) {
+            res = (res * x_mod_p) % prime;
+        }
+        y_copy >>= 1;
+        x_mod_p = (x_mod_p * x_mod_p) % prime;
+    }
+    return res;
+}
+
 Integer randomGeneration(const int& secureParam) {
     AutoSeededRandomPool prng;
     Integer p;
@@ -55,27 +84,31 @@ Integer randomGeneration(const int& secureParam) {
 }
 
 Integer primeGeneration (const int& secureParam) {
-    Integer p;
-    ifstream in("Prime_store.txt");
+    char a[100] = "7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFh";
 
-    if (!in) {   // If the file doesn't exit
-        AutoSeededRandomPool prng;
+    Integer p(a);
 
-        AlgorithmParameters params = MakeParameters("BitLength", secureParam)("RandomNumberType", Integer::PRIME);
-        p.GenerateRandom(prng, params);
+    //Integer p;
+    //ifstream in("Prime_store.txt");
 
-        ofstream out("Prime_store.txt");
+    //if (!in) {   // If the file doesn't exit
+    //    AutoSeededRandomPool prng;
 
-        if (out.is_open()) {
-            out << hex << p;
-        }
+    //    AlgorithmParameters params = MakeParameters("BitLength", secureParam)("RandomNumberType", Integer::PRIME);
+    //    p.GenerateRandom(prng, params);
 
-        out.close();
-    }
-    else {
-        in >> hex >>  p;
-        in.close();
-    }
+    //    ofstream out("Prime_store.txt");
+
+    //    if (out.is_open()) {
+    //        out << hex << p;
+    //    }
+
+    //    out.close();
+    //}
+    //else {
+    //    in >> hex >>  p;
+    //    in.close();
+    //}
 
 	return p;
 }
@@ -105,7 +138,7 @@ Integer string_to_Integer (const string& str) {
 
     a[i++] = 'h';
     a[i] = '\0';
-    cout << "a: " << a << endl;
+    //cout << "a: " << a << endl;
     
     Integer H(a);
 
@@ -125,21 +158,7 @@ Integer hash256Function (const string& str) {
             secureParam / 8) // cut the formoal secureParam / 8 bytes
     );
 
-    return string_to_Integer(value);
-}
-
-Integer fastPower (Integer base, Integer power) {
-    Integer result = 1;
-
-    while (power > 0) {
-        if (power % 2 == 1) {
-            result = (result * base) % prime;
-        }
-        power >>= 1;
-        base = (base * base) % prime;
-    }
-
-    return result;
+    return fastPower(generator, string_to_Integer(value));
 }
 
 bool isInterprime(Integer a, Integer b) {
@@ -314,4 +333,45 @@ int hex_to_int(Integer hexNum) {
     ss >> decNum;
 
     return decNum;
+}
+
+// 找到阶为n的最小原根
+Integer findPrimitiveRoot(const Integer& n)
+{
+    if (n <= 2) {
+        return -1;
+    }
+    if (n == 4) {
+        return 3;
+    }
+    Integer phi = n - 1;
+    Integer factors[100];
+    Integer tmp = phi;
+    int count = 0;
+
+    for (Integer i = 2; i * i <= tmp; i++) {
+        if (tmp % i == 0) {
+            factors[count++] = i;
+            while (tmp % i == 0) {
+                tmp /= i;
+            }
+        }
+    }
+
+    if (tmp > 1) {
+        factors[count++] = tmp;
+    }
+
+    for (Integer res = 2; res <= n; res++) {
+        bool ok = true;
+        for (int i = 0; i < count && ok; i++) {
+            ok = (fastPower(res, phi / factors[i]) != 1);
+        }
+        if (ok) {
+            cout << "原根为: " << res << endl;
+            return res;
+        }
+    }
+
+    return -1;
 }

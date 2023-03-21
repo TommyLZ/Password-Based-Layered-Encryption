@@ -143,17 +143,14 @@ Integer KeyServer::hardenPassword(string ID_u, Integer alpha) {
 
     string msk = Integer_to_string((this->msk).GetPrivateExponent());
 
-    Integer nu = hash256Function(msk + ID_u);
-    cout << "Hash of key server: " << nu << endl;
+    Integer nu = hash256Function(msk + ID_u) % prime;
     
-    //// Determine the interprime
-    //while (!isInterprime(nu, prime)) {
-    //    nu += 11;
-    //}
-
-    Integer beta = fastPower(alpha, nu);
+    // Determine the interprime
+    while (!isInterprime(nu, prime)) {
+        nu += 11;
+    }
     
-    return beta;
+    return fastPower(alpha, nu);
 }
 
 bool KeyServer::SignMessage(const string& message, string& signature)
@@ -199,7 +196,7 @@ void KeyServer::tokenVerify(string& token, byte* IV, vector<string> & KSresponse
     s_u = s_u.substr(s_u.find(':') + 1, s_u.size());
     cout << s_u << endl;
     cred_ks = cred_ks.substr(cred_ks.find(':') + 1, cred_ks.size());
-    cout << cred_ks << endl;
+    cout << "cred_ks: " << cred_ks << endl;
 
     // type conversion
     Integer key_int;

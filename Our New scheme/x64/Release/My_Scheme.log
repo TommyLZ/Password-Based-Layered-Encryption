@@ -1,7 +1,7 @@
-﻿  KeyServer.cpp
+﻿  Client.cpp
   正在生成代码
-  1 of 1911 functions (<0.1%) were compiled, the rest were copied from previous compilation.
+  2 of 1909 functions ( 0.1%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    2 functions had inline decision re-evaluated but remain unchanged
+    8 functions had inline decision re-evaluated but remain unchanged
   已完成代码的生成
   My_Scheme.vcxproj -> E:\006.Thesis\20220110\007.draft-v7\Exp\My_Scheme\x64\Release\My_Scheme.exe

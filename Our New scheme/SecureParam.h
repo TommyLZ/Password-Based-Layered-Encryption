@@ -31,7 +31,7 @@ Integer string_to_Integer(const string& str);
 Integer hash256Function(const string& str);
 
 // define the fastPower
-Integer fastPower(Integer base, Integer power);
+Integer fastPower(const Integer& x, const Integer& y);
 
 // signature verification function
 bool VerifyMessage(const ECDSA<ECP, SHA256>::PublicKey& key, const string& message, const string& signature);
@@ -45,9 +45,19 @@ void AES_CTR_Dec(byte* key, byte* iv, string cipher, string& plain);
 
 int hex_to_int(Integer hexNum);
 
+Integer getInverse(Integer a, Integer mod);
+
+Integer exgcd(Integer a, Integer b, Integer& x, Integer& y);
+
 // define the secureParam
 const int secureParam = 128;
 
+// mersenne prime
 const Integer prime = primeGeneration(secureParam);
 
+// the minimum generator of mersenne prime is 2
+const Integer generator = 2;
+
 bool isInterprime(Integer a, Integer b);
+
+Integer findPrimitiveRoot(const Integer& n);
