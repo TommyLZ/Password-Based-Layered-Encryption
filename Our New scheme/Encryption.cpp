@@ -45,7 +45,6 @@ void Encryption(const string& psw_u, const string& ID_u) {
 	string token;
 	byte* IV = new byte[AES::BLOCKSIZE];
 	client.tokenGenForKS(keyserver.mpk, msg_beta, signature, beta, token, IV);
-	cout << "the client pass the token: " << token << endl;
 	vector<string> response;
 	keyserver.tokenVerify(token, IV, response);
 }

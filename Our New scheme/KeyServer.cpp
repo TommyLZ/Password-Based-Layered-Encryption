@@ -142,14 +142,10 @@ void KeyServer::LoadPublicKey(const string& filename, ECDSA<ECP, SHA256>::Public
 Integer KeyServer::hardenPassword(string ID_u, Integer alpha) {
 
     string msk = Integer_to_string((this->msk).GetPrivateExponent());
-
-    Integer nu = hash256Function(msk + ID_u) % prime;
+    Integer nu = hash256Function(msk + ID_u);
+    cout << "the hardening factor nu is: " << nu << endl;
     
-    // Determine the interprime
-    while (!isInterprime(nu, prime)) {
-        nu += 11;
-    }
-    
+    // password hardening
     return fastPower(alpha, nu);
 }
 
@@ -203,7 +199,9 @@ void KeyServer::tokenVerify(string& token, byte* IV, vector<string> & KSresponse
     key_int = string_to_Integer(cred_ks);
     byte* key_byte = new byte[16];
     Integer_to_Bytes(key_int, key_byte);
-
+    cout << key_byte << endl;
     string plain;
-    AES_CTR_Dec(key_byte, IV, token, plain);
+    AES_CTR_Dec(token, key_byte, IV,  plain);
+
+    cout << "recovered text: " << plain << endl;
 }

@@ -23,6 +23,7 @@ extern const Integer prime;
 #include "sha.h"
 using CryptoPP::SHA256;
 
+#include <cryptlib.h>
 #include <iostream>
 #include <Windows.h>
 #include <vector>
@@ -41,13 +42,11 @@ void Registration (const string& psw_u, const string& ID_u) {
 	CloudServer cloudserver;
 
 	// Password blindness
-	Integer alpha;
-    alpha = client.blindsPassword();
+	Integer alpha = client.blindsPassword();
 	cout << "alpha: " << alpha << endl;
 
 	// Password hardening
-	Integer beta;
-	beta = keyserver.hardenPassword(client.getID(), alpha);
+	Integer beta = keyserver.hardenPassword(client.getID(), alpha);
 	cout << "beta: " << beta << endl;
 	
 	// Digital signature (NIZK)

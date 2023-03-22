@@ -44,25 +44,12 @@ using CryptoPP::CTR_Mode;
 #include <Windows.h>
 using namespace std;
 
-//Integer fastPower(Integer base, Integer power) {
-//    Integer result = 1;
-//
-//    while (power > 0) {
-//        if (power % 2 == 1) {
-//            result = (result * base) % prime;
-//        }
-//        power >>= 1;
-//        base = (base * base) % prime;
-//    }
-//
-//    return result;
-//}
-
 Integer fastPower(const Integer& x, const Integer& y)
 {
     Integer res = 1;
     Integer x_mod_p = x % prime;
     Integer y_copy = y;
+
     while (y_copy > 0) {
         if (y_copy.IsOdd()) {
             res = (res * x_mod_p) % prime;
@@ -70,6 +57,7 @@ Integer fastPower(const Integer& x, const Integer& y)
         y_copy >>= 1;
         x_mod_p = (x_mod_p * x_mod_p) % prime;
     }
+
     return res;
 }
 
@@ -84,31 +72,9 @@ Integer randomGeneration(const int& secureParam) {
 }
 
 Integer primeGeneration (const int& secureParam) {
+
     char a[100] = "7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFh";
-
     Integer p(a);
-
-    //Integer p;
-    //ifstream in("Prime_store.txt");
-
-    //if (!in) {   // If the file doesn't exit
-    //    AutoSeededRandomPool prng;
-
-    //    AlgorithmParameters params = MakeParameters("BitLength", secureParam)("RandomNumberType", Integer::PRIME);
-    //    p.GenerateRandom(prng, params);
-
-    //    ofstream out("Prime_store.txt");
-
-    //    if (out.is_open()) {
-    //        out << hex << p;
-    //    }
-
-    //    out.close();
-    //}
-    //else {
-    //    in >> hex >>  p;
-    //    in.close();
-    //}
 
 	return p;
 }
@@ -120,9 +86,7 @@ string Integer_to_string (const Integer& integer) {
     ss << hex << integer;
     ss >> str;
     transform(str.begin(), str.end(), str.begin(), ::toupper);
-    //cout << str << endl;
     str = str.substr(0, str.size() - 1);
-    //cout << "str: " << str << endl;
 
     return str;
 }
@@ -138,7 +102,6 @@ Integer string_to_Integer (const string& str) {
 
     a[i++] = 'h';
     a[i] = '\0';
-    //cout << "a: " << a << endl;
     
     Integer H(a);
 
@@ -153,11 +116,11 @@ Integer hash256Function (const string& str) {
         str,
         true,
         new HashFilter(sha256,
-            new HexEncoder(new CryptoPP::StringSink(value)),
-            false,
-            secureParam / 8) // cut the formoal secureParam / 8 bytes
+            new HexEncoder(new CryptoPP::StringSink(value))
+        )
     );
-
+    
+    // reducing the value into the cyclic group
     return fastPower(generator, string_to_Integer(value));
 }
 
@@ -219,112 +182,6 @@ string time_to_string (time_t time) {
     return time_string;
 }
 
-// AES: key length 128, 192, 256
-void AES_CTR_Enc (byte* key, string plain, string& cipher, byte* iv) {
-    AutoSeededRandomPool prng;
-
-    prng.GenerateBlock(iv, sizeof(iv));
-
-    string encoded, recovered;
-
-    // Pretty print key
-    encoded.clear();
-    StringSource(key, 16, true,
-        new HexEncoder(
-            new StringSink(encoded)
-        ) // HexEncoder
-    ); // StringSource
-    cout << "key: " << encoded << endl;
-
-    // Pretty print iv
-    encoded.clear();
-    StringSource(iv, 16, true,
-        new HexEncoder(
-            new StringSink(encoded)
-        ) // HexEncoder
-    ); // StringSource
-    cout << "iv: " << encoded << endl;
-
-    // Encryption
-    try
-    {
-        cout << "plain text: " << plain << endl;
-
-        CTR_Mode< AES >::Encryption e;
-        e.SetKeyWithIV(key, 16, iv);
-
-        StringSource(plain, true,
-            new StreamTransformationFilter(e,
-                new StringSink(cipher)
-            ) // StreamTransformationFilter      
-        ); // StringSource
-    }
-    catch (const CryptoPP::Exception& e)
-    {
-        cerr << e.what() << endl;
-        exit(1);
-    }
-
-    // Pretty print
-    encoded.clear();
-    StringSource(cipher, true,
-        new HexEncoder(
-            new StringSink(encoded)
-        ) // HexEncoder
-    ); // StringSource
-    cout << "cipher text: " << encoded << endl;
-    cipher = encoded;
-}
-
-void AES_CTR_Dec(byte* key, byte* iv, string cipher, string& plain) {
-    string recovered;
-
-    // Pretty print iv
-    cout << "iv in the decryption function: ";
-    string encoded;
-    encoded.clear();
-    StringSource(iv, 16, true,
-        new HexEncoder(
-            new StringSink(encoded)
-        ) // HexEncoder
-    ); // StringSource
-    cout << "iv: " << encoded << endl;
-
-    cout << "key in the decryption function: ";
-    encoded.clear();
-    StringSource(key, 16, true,
-        new HexEncoder(
-            new StringSink(encoded)
-        ) // HexEncoder
-    ); // StringSource
-    cout << encoded << endl;
-
-    cout << "cipher to be decrypted: " << cipher << endl;
-    // decryption
-    try
-    {
-        CTR_Mode< AES >::Decryption d;
-        d.SetKeyWithIV(key, 16, iv);
-
-        // the streamtransformationfilter removes
-        //  padding as required.
-        StringSource s(cipher, true,
-            new StreamTransformationFilter(d,
-                new StringSink(recovered)
-            ) // streamtransformationfilter
-        ); // stringsource
-
-        cout << "recovered text: " << recovered << endl;
-
-        plain = recovered;
-    }
-    catch (const CryptoPP::Exception& e)
-    {
-        cerr << e.what() << endl;
-        exit(1);
-    }
-}
-
 int hex_to_int(Integer hexNum) {
     stringstream ss;
 
@@ -335,43 +192,30 @@ int hex_to_int(Integer hexNum) {
     return decNum;
 }
 
-// 找到阶为n的最小原根
-Integer findPrimitiveRoot(const Integer& n)
+void AES_CTR_Enc(const string& plain, const byte* key, const byte* iv, string& cipher) {
+    CTR_Mode<AES>::Encryption e;
+    e.SetKeyWithIV(key, AES::DEFAULT_KEYLENGTH, iv);
+
+    StringSource(plain, true, new StreamTransformationFilter(e, new StringSink(cipher)));
+}
+
+void AES_CTR_Dec(const string& cipher, const byte* key, const byte* iv, string& recovered) {
+    CTR_Mode<AES>::Decryption d;
+    d.SetKeyWithIV(key, AES::DEFAULT_KEYLENGTH, iv);
+
+    // Pretty print key
+    string encoded;
+    encoded.clear();
+    StringSource(key, 16, true, new HexEncoder(new StringSink(encoded)));
+    cout << "key in decryption: " << encoded << endl;
+
+    StringSource(cipher, true, new StreamTransformationFilter(d, new StringSink(recovered)));
+}
+
+Integer GCD(Integer a, Integer b)
 {
-    if (n <= 2) {
-        return -1;
-    }
-    if (n == 4) {
-        return 3;
-    }
-    Integer phi = n - 1;
-    Integer factors[100];
-    Integer tmp = phi;
-    int count = 0;
-
-    for (Integer i = 2; i * i <= tmp; i++) {
-        if (tmp % i == 0) {
-            factors[count++] = i;
-            while (tmp % i == 0) {
-                tmp /= i;
-            }
-        }
-    }
-
-    if (tmp > 1) {
-        factors[count++] = tmp;
-    }
-
-    for (Integer res = 2; res <= n; res++) {
-        bool ok = true;
-        for (int i = 0; i < count && ok; i++) {
-            ok = (fastPower(res, phi / factors[i]) != 1);
-        }
-        if (ok) {
-            cout << "原根为: " << res << endl;
-            return res;
-        }
-    }
-
-    return -1;
+    if (b == Integer::Zero())
+        return a;
+    else
+        return GCD(b, a % b);
 }
