@@ -39,6 +39,9 @@
     <ClCompile Include="inverse.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Decryption.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="KeyServer.h">
@@ -57,6 +60,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Encryption.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Decryption.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -60,6 +60,12 @@ const Integer generator = 2;
 
 bool isInterprime(Integer a, Integer b);
 
-Integer findPrimitiveRoot(const Integer& n);
-
 Integer GCD(Integer a, Integer b);
+
+void AES_CTR_EncFile(ifstream& plain, const byte* key, const byte* iv, ofstream& cipher);
+
+string Byte_to_String(byte* bytes);
+
+vector<byte> readFile(string filename);
+
+string hashFile(string filename);

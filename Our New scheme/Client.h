@@ -36,4 +36,8 @@ public:
 	void credGen(const ECDSA<ECP, SHA256>::PublicKey& key,  string& message,  string& signature,  Integer& beta, vector<string> & cred);
 	
 	void tokenGenForKS(const ECDSA<ECP, SHA256>::PublicKey& key,  string& message,  string& signature,  Integer& beta, string& token, byte* IV);
+
+	void tokenGenForCS(Integer& beta, string& s_u, string& token, byte* iv, vector<string>& Phi_u);
+
+	void fetchFile(vector<string> Phi_u);
 };

@@ -1,6 +1,23 @@
-﻿  inverse.cpp
-  正在生成代码
-  Compiler switch has changed, fall back to full compilation.
-  All 1905 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
-  已完成代码的生成
-  My_Scheme.vcxproj -> E:\006.Thesis\20220110\007.draft-v7\Exp\My_Scheme\x64\Release\My_Scheme.exe
+﻿  Client.cpp
+E:\006.Thesis\20220110\007.draft-v7\Exp\My_Scheme\Client.cpp(132,156): error C2556: “std::vector<std::string,std::allocator<std::string>> Client::tokenGenForKS(const CryptoPP::DL_PublicKey_EC<CryptoPP::ECP> &,std::string &,std::string &,CryptoPP::Integer &,std::string &,byte *)”: 重载函数与“void Client::tokenGenForKS(const CryptoPP::DL_PublicKey_EC<CryptoPP::ECP> &,std::string &,std::string &,CryptoPP::Integer &,std::string &,byte *)”只是在返回类型上不同
+E:\006.Thesis\20220110\007.draft-v7\Exp\My_Scheme\Client.h(38,7): message : 参见“Client::tokenGenForKS”的声明
+E:\006.Thesis\20220110\007.draft-v7\Exp\My_Scheme\Client.cpp(132,24): error C2371: “Client::tokenGenForKS”: 重定义；不同的基类型
+E:\006.Thesis\20220110\007.draft-v7\Exp\My_Scheme\Client.h(38,7): message : 参见“Client::tokenGenForKS”的声明
+E:\006.Thesis\20220110\007.draft-v7\Exp\My_Scheme\Client.cpp(277,20): error C2082: 形参“Phi_u”的重定义
+E:\006.Thesis\20220110\007.draft-v7\Exp\My_Scheme\Client.cpp(285,14): error C2039: "fetchFile": 不是 "Client" 的成员
+E:\006.Thesis\20220110\007.draft-v7\Exp\My_Scheme\Client.h(18,7): message : 参见“Client”的声明
+  CloudServer.cpp
+E:\006.Thesis\20220110\007.draft-v7\Exp\My_Scheme\CloudServer.h(11,22): error C2061: 语法错误: 标识符“vector”
+  Decryption.cpp
+E:\006.Thesis\20220110\007.draft-v7\Exp\My_Scheme\Decryption.h(3,29): error C4430: 缺少类型说明符 - 假定为 int。注意: C++ 不支持默认 int
+E:\006.Thesis\20220110\007.draft-v7\Exp\My_Scheme\Decryption.h(3,29): error C2143: 语法错误: 缺少“,”(在“&”的前面)
+E:\006.Thesis\20220110\007.draft-v7\Exp\My_Scheme\Decryption.cpp(52,8): error C2660: “Client::tokenGenForCS”: 函数不接受 4 个参数
+E:\006.Thesis\20220110\007.draft-v7\Exp\My_Scheme\Client.h(40,7): message : 参见“Client::tokenGenForCS”的声明
+E:\006.Thesis\20220110\007.draft-v7\Exp\My_Scheme\Decryption.cpp(52,8): message : 尝试匹配参数列表“(CryptoPP::Integer, std::string, std::string, byte *)”时
+E:\006.Thesis\20220110\007.draft-v7\Exp\My_Scheme\Decryption.cpp(55,14): error C2039: "tokenVerify": 不是 "CloudServer" 的成员
+E:\006.Thesis\20220110\007.draft-v7\Exp\My_Scheme\CloudServer.h(6,7): message : 参见“CloudServer”的声明
+  Encryption.cpp
+E:\006.Thesis\20220110\007.draft-v7\Exp\My_Scheme\Encryption.cpp(56,14): error C2039: "tokenVerify": 不是 "CloudServer" 的成员
+E:\006.Thesis\20220110\007.draft-v7\Exp\My_Scheme\CloudServer.h(6,7): message : 参见“CloudServer”的声明
+  main.cpp
+  Registration.cpp

@@ -43,11 +43,9 @@ void Registration (const string& psw_u, const string& ID_u) {
 
 	// Password blindness
 	Integer alpha = client.blindsPassword();
-	cout << "alpha: " << alpha << endl;
 
 	// Password hardening
 	Integer beta = keyserver.hardenPassword(client.getID(), alpha);
-	cout << "beta: " << beta << endl;
 	
 	// Digital signature (NIZK)
 	string msg_beta = Integer_to_string(beta);

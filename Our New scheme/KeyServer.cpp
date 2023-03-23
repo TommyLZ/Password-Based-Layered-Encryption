@@ -143,7 +143,8 @@ Integer KeyServer::hardenPassword(string ID_u, Integer alpha) {
 
     string msk = Integer_to_string((this->msk).GetPrivateExponent());
     Integer nu = hash256Function(msk + ID_u);
-    cout << "the hardening factor nu is: " << nu << endl;
+
+    cout << "The hardening factor is: " << nu << endl;
     
     // password hardening
     return fastPower(alpha, nu);
@@ -177,7 +178,7 @@ void KeyServer::store (string& ID_u, string& s_u, string& cred_ks) {
     out.close();
 }
 
-void KeyServer::tokenVerify(string& token, byte* IV, vector<string> & KSresponse) {
+string KeyServer::tokenVerify(string& token, byte* IV, vector<string> & KSresponse) {
     ifstream in("KS_store.txt");
     string user_identity;
     string s_u;
@@ -204,4 +205,6 @@ void KeyServer::tokenVerify(string& token, byte* IV, vector<string> & KSresponse
     AES_CTR_Dec(token, key_byte, IV,  plain);
 
     cout << "recovered text: " << plain << endl;
+
+    return s_u;
 }

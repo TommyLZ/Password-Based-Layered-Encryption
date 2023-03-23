@@ -9,6 +9,10 @@ using CryptoPP::ECDSA;
 using CryptoPP::ECP;
 using CryptoPP::DL_GroupParameters_EC;
 
+#include "files.h"
+using CryptoPP::FileSource;
+using CryptoPP::FileSink;
+
 #include "filters.h"
 using CryptoPP::StringSink;
 using CryptoPP::StringSource;
@@ -79,6 +83,7 @@ Integer primeGeneration (const int& secureParam) {
 	return p;
 }
 
+/************************************Format transformation Begin****************************/
 string Integer_to_string (const Integer& integer) {
     string str;
     stringstream ss;
@@ -108,6 +113,45 @@ Integer string_to_Integer (const string& str) {
     return H;
 }
 
+string time_to_string(time_t time) {
+    tm curr_tm{};
+    char time_string[100];
+
+    localtime_s(&curr_tm, &time);
+
+    strftime(time_string, 50, "%X", &curr_tm);
+
+    return time_string;
+}
+
+int hex_to_int(Integer hexNum) {
+    stringstream ss;
+
+    int decNum;
+    ss << std::hex << hexNum;
+    ss >> decNum;
+
+    return decNum;
+}
+
+void Integer_to_Bytes (Integer num, byte* bytes)
+{
+    for (int i = 0, j = num.ByteCount() - 1, k = 0; i < num.ByteCount(); ++i, --j, ++k) {
+        bytes[k] = num.GetByte(j);
+    }
+}
+
+string Byte_to_String(byte* bytes) {
+    string str = "";
+    for (int i = 0; i < sizeof(bytes); ++i) {
+        str += (int)bytes[i];
+    }
+    return str;
+}
+/********************************Format transformation End*******************************/
+
+
+/***************************Hash the data & file (using SHA256)**************************/
 Integer hash256Function (const string& str) {
 	string value;
     SHA256 sha256;
@@ -123,6 +167,36 @@ Integer hash256Function (const string& str) {
     // reducing the value into the cyclic group
     return fastPower(generator, string_to_Integer(value));
 }
+
+vector<byte> readFile (string filename) {
+    std::ifstream file(filename, std::ios::binary | std::ios::ate);
+    std::streamsize size = file.tellg();
+    file.seekg(0, std::ios::beg);
+    std::vector<byte> buffer(size);
+    if (file.read(reinterpret_cast<char*>(buffer.data()), size)) {
+        return buffer;
+    }
+    else {
+        return std::vector<byte>();
+    }
+}
+
+string hashFile (string filename) {
+    vector<byte> data = readFile(filename);
+    SHA256 hash;
+    vector<byte> digest(hash.DigestSize());
+    hash.Update(data.data(), data.size());
+    hash.Final(digest.data());
+
+    string str = "";
+    for (const byte& b : digest) {
+        str += b;
+    }
+
+    return str;
+}
+
+/***************************Hash the data & file (using SHA256)**************************/
 
 bool isInterprime(Integer a, Integer b) {
     if (a == 1 || b == 1)
@@ -164,33 +238,6 @@ bool VerifyMessage(const ECDSA<ECP, SHA256>::PublicKey& key, const string& messa
     return result;
 }
 
-void Integer_to_Bytes(Integer num, byte* bytes)
-{
-    for (int i = 0, j= num.ByteCount()-1, k=0; i < num.ByteCount(); ++i, --j, ++k) {
-        bytes[k] = num.GetByte(j);
-    }
-}
-
-string time_to_string (time_t time) {
-    tm curr_tm{};
-	char time_string[100];
-
-	localtime_s(&curr_tm ,&time);
-	
-	strftime(time_string, 50, "%X", &curr_tm);
-
-    return time_string;
-}
-
-int hex_to_int(Integer hexNum) {
-    stringstream ss;
-
-    int decNum;
-    ss << std::hex << hexNum;
-    ss >> decNum;
-
-    return decNum;
-}
 
 void AES_CTR_Enc(const string& plain, const byte* key, const byte* iv, string& cipher) {
     CTR_Mode<AES>::Encryption e;

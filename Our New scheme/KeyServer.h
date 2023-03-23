@@ -75,6 +75,6 @@ public:
 
 	void store(string& ID_u, string& s_u, string& cred_ks);
 
-	void tokenVerify(string& token, byte * IV, vector<string>& KSresponse);
+	string tokenVerify(string& token, byte * IV, vector<string>& KSresponse);
 };
 
