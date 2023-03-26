@@ -136,18 +136,41 @@ int hex_to_int(Integer hexNum) {
 
 void Integer_to_Bytes (Integer num, byte* bytes)
 {
-    for (int i = 0, j = num.ByteCount() - 1, k = 0; i < num.ByteCount(); ++i, --j, ++k) {
+    int k = 0;
+    for (int i = 0, j = num.ByteCount() - 1; i < num.ByteCount(); ++i, --j, ++k) {
         bytes[k] = num.GetByte(j);
+    }
+
+    // Padding
+    while (k < secureParam / 8) {
+        bytes[k] = 0;
+        k++;
     }
 }
 
 string Byte_to_String(byte* bytes) {
-    string str = "";
-    for (int i = 0; i < sizeof(bytes); ++i) {
-        str += (int)bytes[i];
-    }
-    return str;
+    //string str = "";
+    //for (int i = 0; i < sizeof(bytes); ++i) {
+    //    str += (int)bytes[i];
+    //}
+    //return str;
+
+    //stringstream ss;
+    //for (int i = 0; i < sizeof(bytes) / sizeof(byte); ++i) {
+    //    ss << hex << (int)bytes[i];
+    //}
+    //
+    //return ss.str();
+
+    return std::string(reinterpret_cast<const char*>(bytes), sizeof(bytes));
 }
+
+string byteToHexString(byte b) {
+    stringstream ss;
+    ss << setfill('0') << setw(2) << hex << (int)b;
+    return ss.str();
+}
+
 /********************************Format transformation End*******************************/
 
 
@@ -181,7 +204,7 @@ vector<byte> readFile (string filename) {
     }
 }
 
-string hashFile (string filename) {
+Integer hashFile (string filename) {
     vector<byte> data = readFile(filename);
     SHA256 hash;
     vector<byte> digest(hash.DigestSize());
@@ -190,11 +213,15 @@ string hashFile (string filename) {
 
     string str = "";
     for (const byte& b : digest) {
-        str += b;
+        str += byteToHexString(b);
     }
 
-    return str;
+    cout << "the hash value of the file: " << str << endl;
+
+    return fastPower(generator, string_to_Integer(str));
 }
+
+
 
 /***************************Hash the data & file (using SHA256)**************************/
 
@@ -247,6 +274,13 @@ void AES_CTR_Enc(const string& plain, const byte* key, const byte* iv, string& c
 }
 
 void AES_CTR_Dec(const string& cipher, const byte* key, const byte* iv, string& recovered) {
+    cout << "iv used in decryption: ";
+    for (int i = 0; i < 16; ++i) {
+        cout << (int)iv[i];
+    }
+    cout << endl;
+
+
     CTR_Mode<AES>::Decryption d;
     d.SetKeyWithIV(key, AES::DEFAULT_KEYLENGTH, iv);
 

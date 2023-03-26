@@ -18,11 +18,13 @@ using namespace std;
 class Client
 {
 private:
+
 	Integer r;
 	string psw_u;
 	string ID_u;
 
 public:
+
 	Client ();
 	Client (string psw_u, string ID_u);
 
@@ -31,13 +33,13 @@ public:
 
 	Integer rGeneration (Integer prime);
 
-	Integer blindsPassword();
+	Integer blindsPassword ();
 
-	void credGen(const ECDSA<ECP, SHA256>::PublicKey& key,  string& message,  string& signature,  Integer& beta, vector<string> & cred);
+	void credGen (const ECDSA<ECP, SHA256>::PublicKey& key,  string& message,  string& signature,  Integer& beta, vector<string> & cred);
 	
-	void tokenGenForKS(const ECDSA<ECP, SHA256>::PublicKey& key,  string& message,  string& signature,  Integer& beta, string& token, byte* IV);
+	void tokenGenForKS(const ECDSA<ECP, SHA256>::PublicKey& key, string& message, string& signature, Integer& beta, string& token, byte* iv);
 
-	void tokenGenForCS(Integer& beta, string& s_u, string& token, byte* iv, vector<string>& Phi_u);
+	void tokenGenForCS (Integer& beta, string& s_u, string& token, byte* iv_dsk, byte* iv_sk, byte* iv_cs, vector<string>& Phi_u);
 
-	void fetchFile(vector<string> Phi_u);
+	void fetchFile (Integer beta, vector<string> Phi_u, byte* iv_sk, byte* iv_dsk);
 };

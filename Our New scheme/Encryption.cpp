@@ -16,6 +16,8 @@ using CryptoPP::HexEncoder;
 using namespace std;
 
 void Encryption(const string& psw_u, const string& ID_u) {
+	cout << endl;
+	cout << endl;
 	cout << "***************************Encryption Mode***************************" << endl;
 
 	// User input the password & ID
@@ -49,7 +51,9 @@ void Encryption(const string& psw_u, const string& ID_u) {
 	// CloudServer Authentication & Resource Store
 	string token_cs;
 	byte* IV_cs = new byte[AES::BLOCKSIZE];
+	byte* IV_dsk = new byte[AES::BLOCKSIZE];
+	byte* IV_sk = new byte[AES::BLOCKSIZE];
 	vector<string> Phi_u;
-	client.tokenGenForCS(beta, s_u, token_cs, IV_cs, Phi_u);
-	cloudserver.tokenVerify(token_cs, IV_cs, Phi_u);
+	client.tokenGenForCS(beta, s_u, token_cs, IV_dsk, IV_sk, IV_cs, Phi_u);
+	cloudserver.tokenVerifyC(token_cs, IV_cs, Phi_u);
 }

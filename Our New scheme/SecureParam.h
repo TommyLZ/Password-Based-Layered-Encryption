@@ -68,4 +68,6 @@ string Byte_to_String(byte* bytes);
 
 vector<byte> readFile(string filename);
 
-string hashFile(string filename);
+Integer hashFile(string filename);
+
+string byteToHexString(byte b);

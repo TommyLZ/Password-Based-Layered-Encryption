@@ -27,7 +27,7 @@ using CryptoPP::HexEncoder;
 using CryptoPP::Integer;
 
 #include "osrng.h"
-// using CryptoPP::AutoSeededX917RNG;
+using CryptoPP::AutoSeededX917RNG;
 using CryptoPP::AutoSeededRandomPool;
 
 #include "oids.h"
@@ -200,7 +200,6 @@ string KeyServer::tokenVerify(string& token, byte* IV, vector<string> & KSrespon
     key_int = string_to_Integer(cred_ks);
     byte* key_byte = new byte[16];
     Integer_to_Bytes(key_int, key_byte);
-    cout << key_byte << endl;
     string plain;
     AES_CTR_Dec(token, key_byte, IV,  plain);
 
