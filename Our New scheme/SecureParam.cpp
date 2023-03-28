@@ -148,21 +148,12 @@ void Integer_to_Bytes (Integer num, byte* bytes)
     }
 }
 
-string Byte_to_String(byte* bytes) {
-    //string str = "";
-    //for (int i = 0; i < sizeof(bytes); ++i) {
-    //    str += (int)bytes[i];
-    //}
-    //return str;
-
-    //stringstream ss;
-    //for (int i = 0; i < sizeof(bytes) / sizeof(byte); ++i) {
-    //    ss << hex << (int)bytes[i];
-    //}
-    //
-    //return ss.str();
-
-    return std::string(reinterpret_cast<const char*>(bytes), sizeof(bytes));
+string Byte_to_String(byte* arr) {
+    string str;
+    for (int i = 0; i < sizeof(arr)/sizeof(arr[0]); ++i) {
+        str += static_cast<int>(arr[i]);
+    }
+    return str;
 }
 
 string byteToHexString(byte b) {
@@ -211,12 +202,12 @@ Integer hashFile (string filename) {
     hash.Update(data.data(), data.size());
     hash.Final(digest.data());
 
-    string str = "";
+    string str;
     for (const byte& b : digest) {
         str += byteToHexString(b);
     }
 
-    cout << "the hash value of the file: " << str << endl;
+    //cout << "the hash value of the file: " << str << endl;
 
     return fastPower(generator, string_to_Integer(str));
 }
@@ -266,30 +257,32 @@ bool VerifyMessage(const ECDSA<ECP, SHA256>::PublicKey& key, const string& messa
 }
 
 
-void AES_CTR_Enc(const string& plain, const byte* key, const byte* iv, string& cipher) {
+void AES_CTR_Enc(const string& plain, byte *key, byte* iv, string& cipher) {
+    //cout << "加密使用的密钥: ";
+    //for (int i = 0; i < 16; ++i) {
+    //    cout << hex << (int)key[i];
+    //}
+    //cout << endl;
+
+    //cout << "加密使用的向量: ";
+    //for (int i = 0; i < 16; ++i) {
+    //    cout << hex << (int)iv[i];
+    //}
+    //cout << endl;
+
     CTR_Mode<AES>::Encryption e;
     e.SetKeyWithIV(key, AES::DEFAULT_KEYLENGTH, iv);
 
     StringSource(plain, true, new StreamTransformationFilter(e, new StringSink(cipher)));
+
+    //string encode;
+    //StringSource(cipher, true, new HexEncoder(new StringSink(encode)));
+    //cout << "加密产生的密文： " << encode << endl;
 }
 
 void AES_CTR_Dec(const string& cipher, const byte* key, const byte* iv, string& recovered) {
-    cout << "iv used in decryption: ";
-    for (int i = 0; i < 16; ++i) {
-        cout << (int)iv[i];
-    }
-    cout << endl;
-
-
     CTR_Mode<AES>::Decryption d;
     d.SetKeyWithIV(key, AES::DEFAULT_KEYLENGTH, iv);
-
-    // Pretty print key
-    string encoded;
-    encoded.clear();
-    StringSource(key, 16, true, new HexEncoder(new StringSink(encoded)));
-    cout << "key in decryption: " << encoded << endl;
-
     StringSource(cipher, true, new StreamTransformationFilter(d, new StringSink(recovered)));
 }
 

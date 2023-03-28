@@ -40,7 +40,7 @@ void Integer_to_Bytes(Integer num, byte* bytes);
 
 string time_to_string(time_t time);
 
-void AES_CTR_Enc(const string& plain, const byte* key, const byte* iv, string& cipher);
+void AES_CTR_Enc(const string& plain, byte* key, byte* iv, string& cipher);
 void AES_CTR_Dec(const string& cipher, const byte* key, const byte* iv, string& recovered);
 
 int hex_to_int(Integer hexNum);
@@ -71,3 +71,9 @@ vector<byte> readFile(string filename);
 Integer hashFile(string filename);
 
 string byteToHexString(byte b);
+
+struct Phi_u {
+	string ctx_str;
+	vector<byte> salt;
+	string rho_u;
+};

@@ -50,10 +50,10 @@ void Encryption(const string& psw_u, const string& ID_u) {
 
 	// CloudServer Authentication & Resource Store
 	string token_cs;
-	byte* IV_cs = new byte[AES::BLOCKSIZE];
-	byte* IV_dsk = new byte[AES::BLOCKSIZE];
-	byte* IV_sk = new byte[AES::BLOCKSIZE];
-	vector<string> Phi_u;
-	client.tokenGenForCS(beta, s_u, token_cs, IV_dsk, IV_sk, IV_cs, Phi_u);
-	cloudserver.tokenVerifyC(token_cs, IV_cs, Phi_u);
+	byte IV_cs[AES::BLOCKSIZE];
+	byte IV_dsk[AES::BLOCKSIZE];
+	byte IV_sk[AES::BLOCKSIZE];
+	Phi_u *phi_u = new Phi_u;
+	client.tokenGenForCS(beta, s_u, token_cs, IV_dsk, IV_sk, IV_cs, phi_u);
+	cloudserver.tokenVerifyC(token_cs, IV_cs, phi_u);
 }

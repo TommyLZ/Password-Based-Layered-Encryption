@@ -8,6 +8,9 @@ using CryptoPP::DL_GroupParameters_EC;
 #include "integer.h"
 using CryptoPP::Integer;
 
+#include "SecureParam.h"
+extern struct Phi_u;
+
 #include "sha.h"
 using CryptoPP::SHA256;
 
@@ -39,7 +42,7 @@ public:
 	
 	void tokenGenForKS(const ECDSA<ECP, SHA256>::PublicKey& key, string& message, string& signature, Integer& beta, string& token, byte* iv);
 
-	void tokenGenForCS (Integer& beta, string& s_u, string& token, byte* iv_dsk, byte* iv_sk, byte* iv_cs, vector<string>& Phi_u);
+	void tokenGenForCS(Integer& beta, string& s_u, string& token, byte(&iv_dsk)[16], byte(&iv_sk)[16], byte(&iv_cs)[16], Phi_u* phi_u);
 
-	void fetchFile (Integer beta, vector<string> Phi_u, byte* iv_sk, byte* iv_dsk);
+	void fetchFile(Integer beta, Phi_u* phi_u, byte(&iv_sk)[16], byte(&iv_dsk)[16]);
 };

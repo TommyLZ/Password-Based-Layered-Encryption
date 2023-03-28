@@ -39,7 +39,7 @@ void CloudServer::resource_store(vector<string> Phi_u) {
     cout << "Outsourcing Successfully!" << endl;
 }
 
-void CloudServer::tokenVerifyC(string& token, byte* IV, vector<string>& Phi_u) {
+void CloudServer::tokenVerifyC(string& token, byte* IV, Phi_u* phi_u) {
     ifstream in("CS_store.txt");
     string user_identity;
     string cred_ks;
@@ -60,8 +60,6 @@ void CloudServer::tokenVerifyC(string& token, byte* IV, vector<string>& Phi_u) {
     AES_CTR_Dec(token, key_byte, IV, plain);
 
     cout << "recovered text: " << plain << endl;
-
-    resource_store(Phi_u);
 }
 
 vector<string> CloudServer::Send() {

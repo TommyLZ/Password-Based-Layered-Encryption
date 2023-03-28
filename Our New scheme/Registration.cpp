@@ -1,9 +1,6 @@
 #include "Registration.h"
-
 #include "Client.h"
-
 #include "KeyServer.h"
-
 #include "CloudServer.h"
 
 #include "filters.h"
