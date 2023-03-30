@@ -21,6 +21,8 @@ void CloudServer::store(string& ID_u, string& cred_cs) {
     }
 
     out.close();
+
+    cout << "The Cloud Server has successfully received and stored the credential! " << endl;
 }
 
 void CloudServer::resource_store(vector<string> Phi_u) {

@@ -18,8 +18,14 @@ using namespace std;
 // generate a random number
 Integer randomGeneration(const int& secureParam);
 
-// generate a random prime of secureParam bits
-Integer primeGeneration(const int& secureParam);
+//// generate a random prime of secureParam bits
+//Integer primeGeneration(const int& secureParam);
+
+Integer getModulo();
+
+Integer getGenerator();
+
+Integer getOrder();
 
 // transform from Integer to string
 string Integer_to_string(const Integer& integer);
@@ -52,15 +58,17 @@ Integer exgcd(Integer a, Integer b, Integer& x, Integer& y);
 // define the secureParam
 const int secureParam = 128;
 
-// mersenne prime
-const Integer prime = primeGeneration(secureParam);
+/*******************************************Create the Group*******************************************/
+/**The blinding and de-blinding operation must be performed in a cyclic group of prime order*/
+// Modulo
+const Integer modulo = getModulo();
 
-// the minimum generator of mersenne prime is 2
-const Integer generator = 2;
+// Generator
+const Integer generator = getGenerator();
 
-bool isInterprime(Integer a, Integer b);
-
-Integer GCD(Integer a, Integer b);
+// Order
+const Integer order = getOrder();
+/******************************************************************************************************/
 
 void AES_CTR_EncFile(ifstream& plain, const byte* key, const byte* iv, ofstream& cipher);
 

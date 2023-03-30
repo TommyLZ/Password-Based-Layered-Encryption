@@ -48,22 +48,25 @@ using CryptoPP::CTR_Mode;
 #include <Windows.h>
 using namespace std;
 
-Integer fastPower(const Integer& x, const Integer& y)
-{
-    Integer res = 1;
-    Integer x_mod_p = x % prime;
-    Integer y_copy = y;
 
-    while (y_copy > 0) {
-        if (y_copy.IsOdd()) {
-            res = (res * x_mod_p) % prime;
-        }
-        y_copy >>= 1;
-        x_mod_p = (x_mod_p * x_mod_p) % prime;
-    }
-
-    return res;
+Integer getModulo() {
+    char mod[100] = "1813ee33af9f7dc75ab102bbb63b9beb7h";
+    Integer modulo(mod);
+    return modulo;
 }
+
+Integer getGenerator() {
+    char gen[100] = "1612ec39e7da95cffcfaa89bec3fee244h";
+    Integer generator(gen);
+    return generator;
+}
+
+Integer getOrder() {
+    char mod[100] = "c09f719d7cfbee3ad58815ddb1dcdf5bh";
+    Integer modulo(mod);
+    return modulo;
+}
+
 
 Integer randomGeneration(const int& secureParam) {
     AutoSeededRandomPool prng;
@@ -75,15 +78,25 @@ Integer randomGeneration(const int& secureParam) {
     return p;
 }
 
-Integer primeGeneration (const int& secureParam) {
+// Exponentiation by squaring
+Integer fastPower(const Integer& x, const Integer& y)
+{
+    Integer res = 1;
+    Integer x_mod_p = x % modulo;
+    Integer y_copy = y;
 
-    char a[100] = "7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFh";
-    Integer p(a);
+    while (y_copy > 0) {
+        if (y_copy.IsOdd()) {
+            res = (res * x_mod_p) % modulo;
+        }
+        y_copy >>= 1;
+        x_mod_p = (x_mod_p * x_mod_p) % modulo;
+    }
 
-	return p;
+    return res;
 }
 
-/************************************Format transformation Begin****************************/
+/************************************Format transformation Functions****************************/
 string Integer_to_string (const Integer& integer) {
     string str;
     stringstream ss;
@@ -162,12 +175,10 @@ string byteToHexString(byte b) {
     return ss.str();
 }
 
-/********************************Format transformation End*******************************/
-
 
 /***************************Hash the data & file (using SHA256)**************************/
 Integer hash256Function (const string& str) {
-	string value;
+	string value; // To store the hash string
     SHA256 sha256;
 
     StringSource ss(
@@ -178,7 +189,7 @@ Integer hash256Function (const string& str) {
         )
     );
     
-    // reducing the value into the cyclic group
+    // hash to the group
     return fastPower(generator, string_to_Integer(value));
 }
 
@@ -187,6 +198,7 @@ vector<byte> readFile (string filename) {
     std::streamsize size = file.tellg();
     file.seekg(0, std::ios::beg);
     std::vector<byte> buffer(size);
+
     if (file.read(reinterpret_cast<char*>(buffer.data()), size)) {
         return buffer;
     }
@@ -207,40 +219,10 @@ Integer hashFile (string filename) {
         str += byteToHexString(b);
     }
 
-    //cout << "the hash value of the file: " << str << endl;
-
+    // hash to the group
     return fastPower(generator, string_to_Integer(str));
 }
 
-
-
-/***************************Hash the data & file (using SHA256)**************************/
-
-bool isInterprime(Integer a, Integer b) {
-    if (a == 1 || b == 1)
-        return true;
-
-    Integer t;
-    while (true) {
-        t = a % b;
-        if (t == 0) {
-            break;
-        }
-        else {
-            a = b;
-            b = t;
-        }
-    }
-
-    if (b > 1) {
-        return false;
-    }
-    else {
-        return true;
-    }
-
-    return false;
-}
 
 bool VerifyMessage(const ECDSA<ECP, SHA256>::PublicKey& key, const string& message, const string& signature)
 {
@@ -258,38 +240,13 @@ bool VerifyMessage(const ECDSA<ECP, SHA256>::PublicKey& key, const string& messa
 
 
 void AES_CTR_Enc(const string& plain, byte *key, byte* iv, string& cipher) {
-    //cout << "加密使用的密钥: ";
-    //for (int i = 0; i < 16; ++i) {
-    //    cout << hex << (int)key[i];
-    //}
-    //cout << endl;
-
-    //cout << "加密使用的向量: ";
-    //for (int i = 0; i < 16; ++i) {
-    //    cout << hex << (int)iv[i];
-    //}
-    //cout << endl;
-
     CTR_Mode<AES>::Encryption e;
     e.SetKeyWithIV(key, AES::DEFAULT_KEYLENGTH, iv);
-
     StringSource(plain, true, new StreamTransformationFilter(e, new StringSink(cipher)));
-
-    //string encode;
-    //StringSource(cipher, true, new HexEncoder(new StringSink(encode)));
-    //cout << "加密产生的密文： " << encode << endl;
 }
 
 void AES_CTR_Dec(const string& cipher, const byte* key, const byte* iv, string& recovered) {
     CTR_Mode<AES>::Decryption d;
     d.SetKeyWithIV(key, AES::DEFAULT_KEYLENGTH, iv);
     StringSource(cipher, true, new StreamTransformationFilter(d, new StringSink(recovered)));
-}
-
-Integer GCD(Integer a, Integer b)
-{
-    if (b == Integer::Zero())
-        return a;
-    else
-        return GCD(b, a % b);
 }

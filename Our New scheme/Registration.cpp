@@ -15,7 +15,9 @@ using CryptoPP::Integer;
 
 #include "SecureParam.h"
 extern const int secureParam;
-extern const Integer prime;
+extern const Integer modulo;
+extern const Integer generator;
+extern const Integer order;
 
 #include "sha.h"
 using CryptoPP::SHA256;
@@ -31,8 +33,8 @@ using namespace std;
 
 void Registration (const string& psw_u, const string& ID_u) {
 	cout << "***************************Registration Mode***************************" << endl;
-	
 	// User input the password & ID
+	
 	// Object instantiation
 	Client client(psw_u, ID_u);
 	KeyServer keyserver;

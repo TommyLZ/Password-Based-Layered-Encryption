@@ -156,6 +156,7 @@
     <ClCompile Include="Registration.cpp" />
     <ClCompile Include="KeyServer.cpp" />
     <ClCompile Include="SecureParam.cpp" />
+    <ClCompile Include="test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h" />

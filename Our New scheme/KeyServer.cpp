@@ -38,7 +38,9 @@ using CryptoPP::SHA256;
 
 #include "SecureParam.h"
 extern const int secreParam;
-extern const Integer prime;
+extern const Integer modulo;
+extern const Integer generator;
+extern const Integer order;
 
 #include <algorithm>
 #include <assert.h>
@@ -140,11 +142,8 @@ void KeyServer::LoadPublicKey(const string& filename, ECDSA<ECP, SHA256>::Public
 
 // Generate Hash Function and its output is in Zp*
 Integer KeyServer::hardenPassword(string ID_u, Integer alpha) {
-
     string msk = Integer_to_string((this->msk).GetPrivateExponent());
     Integer nu = hash256Function(msk + ID_u);
-
-    cout << "The hardening factor is: " << nu << endl;
     
     // password hardening
     return fastPower(alpha, nu);
@@ -176,6 +175,8 @@ void KeyServer::store (string& ID_u, string& s_u, string& cred_ks) {
     }
 
     out.close();
+
+    cout << "The Key Server has successfully received and stored the credential! " << endl;
 }
 
 string KeyServer::tokenVerify(string& token, byte* IV, vector<string> & KSresponse) {

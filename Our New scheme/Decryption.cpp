@@ -43,7 +43,7 @@ void Decryption(const string& psw_u, const string& ID_u) {
 
 	// KeyServer Authentication
 	string token_ks;
-	byte* IV_ks = new byte[AES::BLOCKSIZE];
+	byte IV_ks[AES::BLOCKSIZE];
 	client.tokenGenForKS(keyserver.mpk, msg_beta, signature, beta, token_ks, IV_ks);
 	vector<string> response;
 	string s_u = keyserver.tokenVerify(token_ks, IV_ks, response);

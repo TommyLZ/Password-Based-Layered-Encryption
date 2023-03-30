@@ -29,7 +29,9 @@ using CryptoPP::AutoSeededRandomPool;
 
 #include "SecureParam.h"
 extern const int secureParam;
-extern const Integer prime;
+extern const Integer modulo;
+extern const Integer generator;
+extern const Integer order;
 
 #include "sha.h"
 using CryptoPP::SHA256;
@@ -59,9 +61,7 @@ using namespace CryptoPP;
 Client::Client() {}
 
 Client::Client(string psw_u, string ID_u): psw_u(psw_u), ID_u(ID_u){
-    std::cout << "prime: " << hex << prime << endl;
-    this -> r = rGeneration(prime);
-    std::cout << "r: " << hex << r << endl;
+    this -> r = rGeneration(order);
 }
 
 string Client::getPassword () {
@@ -72,28 +72,22 @@ string Client::getID() {
     return ID_u;
 }
 
-// r is randomly generated for secure protection
-Integer Client::rGeneration (Integer prime) {
+// r is randomly select from [1, order-1]
+Integer Client::rGeneration (Integer order) {
     AutoSeededRandomPool prng;
     Integer r;
 
     const Integer mini = 0;
-    const Integer maxi = prime - 1;
+    const Integer maxi = order - 1;
     r.Randomize(prng, mini, maxi);
-    
-    bool flag = true;
-    while (GCD(r, prime) != 1) {
-        r.Randomize(prng, mini, maxi);
-    }
 
     return r;
 }
 
 Integer Client::blindsPassword() {
-
     Integer H(hash256Function(this->psw_u));
 
-    // blind the value to against dictionary guessing attack
+    // blind the value
     Integer blind_value = fastPower(H, this -> r);
 
     return blind_value;
@@ -106,19 +100,13 @@ void Client::credGen (const ECDSA<ECP, SHA256>::PublicKey& key, string& message,
 
     string s_u = Integer_to_string(randomGeneration(secureParam));
 
-    Integer r_inverse = this->r.InverseMod(prime);
+    Integer r_inverse = this->r.InverseMod(order);
     string beta_inverse = Integer_to_string(fastPower(beta, r_inverse));
-
-    // It may be because of a hardware failure, the de-blinding fails
-    // the correct de-blinding result
-    beta_inverse = "20000000000000";
 
     string pwd_u_hat = Integer_to_string(hash256Function(this->psw_u + beta_inverse));
     string cred_ks = Integer_to_string(hash256Function(pwd_u_hat + this -> ID_u));
-    //cout << "credential for key server: " << cred_ks << endl;
 
     string cred_cs = Integer_to_string(hash256Function(this->ID_u + pwd_u_hat + s_u));
-    //cout << "credential for cloud server: " << cred_cs << endl;
 
     cred.push_back(this->ID_u);
     cred.push_back(s_u);
@@ -126,32 +114,24 @@ void Client::credGen (const ECDSA<ECP, SHA256>::PublicKey& key, string& message,
     cred.push_back(cred_cs);
 }
 
-void Client::tokenGenForKS(const ECDSA<ECP, SHA256>::PublicKey& key, string& message, string& signature, Integer& beta, string& token, byte* iv) {    
+void Client::tokenGenForKS(const ECDSA<ECP, SHA256>::PublicKey& key, string& message, string& signature, Integer& beta, string& token, byte (&iv)[16]) {
     if (!VerifyMessage(key, message, signature)) {
         abort();
     }
 
-    Integer r_inverse = this->r.InverseMod(prime);
+    Integer r_inverse = this->r.InverseMod(order);
     string beta_inverse = Integer_to_string(fastPower(beta, r_inverse));
-
-    // It may be because of a hardware failure, the de-blinding fails
-    // the correct de-blinding result
-    beta_inverse = "20000000000000";
+    cout << "beta_inverse: " << beta_inverse << endl;
 
     string pwd_u_hat = Integer_to_string(hash256Function(this->psw_u + beta_inverse));
     Integer omega_ks = hash256Function(pwd_u_hat + this->ID_u);
     byte* ase_key = new byte [16];
-
-    //cout << "omega_ks: " << omega_ks << endl;
 
     Integer_to_Bytes(omega_ks, ase_key);
 
 	timeb t;
 	ftime(&t);
 	string str_time = time_to_string(t.time);
-
-    //cout << "t.time: " << t.time << endl;
-    //cout << "str_time" << str_time << endl;
 
     // Pretty print key
     string encoded;
@@ -172,12 +152,8 @@ void Client::tokenGenForKS(const ECDSA<ECP, SHA256>::PublicKey& key, string& mes
 
 
 void Client::tokenGenForCS(Integer& beta, string& s_u, string& token, byte(&iv_dsk)[16], byte(&iv_sk)[16], byte(&iv_cs)[16], Phi_u* phi_u) {
-    Integer r_inverse = this->r.InverseMod(prime);
+    Integer r_inverse = this->r.InverseMod(order);
     string beta_inverse = Integer_to_string(fastPower(beta, r_inverse));
-
-    // It may be because of a hardware failure, the de-blinding fails
-    // the correct de-blinding result
-    beta_inverse = "20000000000000";
 
     string pwd_u_hat = Integer_to_string(hash256Function(this->psw_u + beta_inverse));
     Integer omega_cs = hash256Function(this->ID_u + pwd_u_hat + s_u);
@@ -307,12 +283,8 @@ void Client::fetchFile (Integer beta,Phi_u * phi_u, byte(&iv_sk)[16], byte (&iv_
     string rho_u = phi_u->rho_u;
 
 /**************************************Calculate the Param***********************************/
-    Integer r_inverse = this->r.InverseMod(prime);
+    Integer r_inverse = this->r.InverseMod(order);
     string beta_inverse = Integer_to_string(fastPower(beta, r_inverse));
-
-    // It may be because of a hardware failure, the de-blinding fails
-    // the correct de-blinding result
-    beta_inverse = "20000000000000";
 
     string pwd_u_hat = Integer_to_string(hash256Function(this->psw_u + beta_inverse));
 

@@ -34,13 +34,13 @@ public:
 	string getPassword();
 	string getID();
 
-	Integer rGeneration (Integer prime);
+	Integer rGeneration (Integer order);
 
 	Integer blindsPassword ();
 
 	void credGen (const ECDSA<ECP, SHA256>::PublicKey& key,  string& message,  string& signature,  Integer& beta, vector<string> & cred);
 	
-	void tokenGenForKS(const ECDSA<ECP, SHA256>::PublicKey& key, string& message, string& signature, Integer& beta, string& token, byte* iv);
+	void tokenGenForKS(const ECDSA<ECP, SHA256>::PublicKey& key, string& message, string& signature, Integer& beta, string& token, byte(&iv)[16]);
 
 	void tokenGenForCS(Integer& beta, string& s_u, string& token, byte(&iv_dsk)[16], byte(&iv_sk)[16], byte(&iv_cs)[16], Phi_u* phi_u);
 
